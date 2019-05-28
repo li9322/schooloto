@@ -1,20 +1,46 @@
 package com.li.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class Product {
     private Long productId;
     private String productName;
     private String productDesc;
+    /**
+     * 简略图
+     */
     private String imgAddr;
+    /**
+     * 原价
+     */
     private String normalPrice;
+    /**
+     * 折后价
+     */
     private String promotionPrice;
     private Integer priority;
     private Date createTime;
     private Date lastEditTime;
+    /**
+     * -1 不可用 0 下架 1 展示
+     */
     private Integer enableStatus;
-    private Long productCategoryId;
-    private Long shopId;
+
+    /**
+     * 产品对应的详情列表,一对多
+     */
+    private List<ProductImg> productImgList;
+
+    /**
+     * 产品所属产品目录
+     */
+    private ProductCategory productCategory;
+
+    /**
+     * 产品所属店铺
+     */
+    private Shop shop;
 
     public Long getProductId() {
         return productId;
@@ -96,20 +122,28 @@ public class Product {
         this.enableStatus = enableStatus;
     }
 
-    public Long getProductCategoryId() {
-        return productCategoryId;
+    public List<ProductImg> getProductImgList() {
+        return productImgList;
     }
 
-    public void setProductCategoryId(Long productCategoryId) {
-        this.productCategoryId = productCategoryId;
+    public void setProductImgList(List<ProductImg> productImgList) {
+        this.productImgList = productImgList;
     }
 
-    public Long getShopId() {
-        return shopId;
+    public ProductCategory getProductCategory() {
+        return productCategory;
     }
 
-    public void setShopId(Long shopId) {
-        this.shopId = shopId;
+    public void setProductCategory(ProductCategory productCategory) {
+        this.productCategory = productCategory;
+    }
+
+    public Shop getShop() {
+        return shop;
+    }
+
+    public void setShop(Shop shop) {
+        this.shop = shop;
     }
 
     @Override
@@ -125,8 +159,9 @@ public class Product {
                 ", createTime=" + createTime +
                 ", lastEditTime=" + lastEditTime +
                 ", enableStatus=" + enableStatus +
-                ", productCategoryId=" + productCategoryId +
-                ", shopId=" + shopId +
+                ", productImgList=" + productImgList +
+                ", productCategory=" + productCategory +
+                ", shop=" + shop +
                 '}';
     }
 }

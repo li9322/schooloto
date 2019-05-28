@@ -3,10 +3,20 @@ package com.li.entity;
 import java.util.Date;
 
 public class WechatAuth {
+    /**
+     * 主键
+     */
     private Long wechatAuthId;
-    private Long userId;
+
+    /**
+     * Wechat唯一标示
+     */
     private String openId;
     private Date createTime;
+    /**
+     * 关联的用户信息（通过用户id）
+     */
+    private PersonInfo personInfo;
 
     public Long getWechatAuthId() {
         return wechatAuthId;
@@ -16,12 +26,22 @@ public class WechatAuth {
         this.wechatAuthId = wechatAuthId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public PersonInfo getPersonInfo() {
+        return personInfo;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    @Override
+    public String toString() {
+        return "WechatAuth{" +
+                "wechatAuthId=" + wechatAuthId +
+                ", personInfo=" + personInfo +
+                ", openId='" + openId + '\'' +
+                ", createTime=" + createTime +
+                '}';
+    }
+
+    public void setPersonInfo(PersonInfo personInfo) {
+        this.personInfo = personInfo;
     }
 
     public String getOpenId() {
@@ -40,13 +60,4 @@ public class WechatAuth {
         this.createTime = createTime;
     }
 
-    @Override
-    public String toString() {
-        return "WechatAuth{" +
-                "wechatAuthId=" + wechatAuthId +
-                ", userId=" + userId +
-                ", openId='" + openId + '\'' +
-                ", createTime=" + createTime +
-                '}';
-    }
 }

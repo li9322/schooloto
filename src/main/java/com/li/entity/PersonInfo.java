@@ -8,7 +8,13 @@ public class PersonInfo {
     private String profileImg;
     private String email;
     private String gender;
-    private Integer enableStates;
+    /**
+     * 用户状态
+     */
+    private Integer enableStatus;
+    /**
+     * 用户类型 1顾客 2店家 3管理员
+     */
     private Integer userType;
     private Date CreateTime;
     private Date LastEditTime;
@@ -53,12 +59,12 @@ public class PersonInfo {
         this.gender = gender;
     }
 
-    public Integer getEnableStates() {
-        return enableStates;
+    public Integer getEnableStatus() {
+        return enableStatus;
     }
 
-    public void setEnableStates(Integer enableStates) {
-        this.enableStates = enableStates;
+    public void setEnableStatus(Integer enableStatus) {
+        this.enableStatus = enableStatus;
     }
 
     public Integer getUserType() {
@@ -93,7 +99,7 @@ public class PersonInfo {
                 ", profileImg='" + profileImg + '\'' +
                 ", email='" + email + '\'' +
                 ", gender='" + gender + '\'' +
-                ", enableStates=" + enableStates +
+                ", enableStatus=" + enableStatus +
                 ", userType=" + userType +
                 ", CreateTime=" + CreateTime +
                 ", LastEditTime=" + LastEditTime +

@@ -4,13 +4,25 @@ package com.li.entity;
 import java.util.Date;
 
 public class ShopCategory {
+    /**
+     * 主键
+     */
     private Long shopCategoryId;
     private String shopCategoryName;
+    /**
+     * 店铺目录描述
+     */
     private String shopCategoryDesc;
+    /**
+     * 店铺目录对应的图片地址
+     */
     private String shopCategoryImg;
     private Integer priority;
     private Date createTime;
     private Date LastEditTime;
+    /**
+     * 上级Id,用于店铺目录的分层展示
+     */
     private Long parentId;
 
     public Long getShopCategoryId() {
@@ -75,5 +87,19 @@ public class ShopCategory {
 
     public void setParentId(Long parentId) {
         this.parentId = parentId;
+    }
+
+    @Override
+    public String toString() {
+        return "ShopCategory{" +
+                "shopCategoryId=" + shopCategoryId +
+                ", shopCategoryName='" + shopCategoryName + '\'' +
+                ", shopCategoryDesc='" + shopCategoryDesc + '\'' +
+                ", shopCategoryImg='" + shopCategoryImg + '\'' +
+                ", priority=" + priority +
+                ", createTime=" + createTime +
+                ", LastEditTime=" + LastEditTime +
+                ", parentId=" + parentId +
+                '}';
     }
 }

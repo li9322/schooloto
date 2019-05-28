@@ -6,8 +6,12 @@ import java.util.Date;
 public class ProductCategory {
     private Long productCategoryId;
     private String productCategoryName;
+    private String productCategoryDesc;
     private Integer priority;
     private Date createTime;
+    /**
+     * 店铺id,表名该产品目录是哪个店铺下的
+     */
     private Long shopId;
 
     public Long getProductCategoryId() {

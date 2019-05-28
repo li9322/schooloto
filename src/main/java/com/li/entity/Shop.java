@@ -4,9 +4,6 @@ import java.util.Date;
 
 public class Shop {
     private Long shopId;
-    private Long ownerId;
-    private long areaId;
-    private Long shopCategoryId;
     private String shopName;
     private String shopDesc;
     private String shopaddr;
@@ -15,8 +12,27 @@ public class Shop {
     private Integer priority;
     private Date createTime;
     private Date lastEditTime;
+    /**
+     * -1不可用 0审核中 1可用
+     */
     private Integer enableStatus;
+    /**
+     * 管理员给店家的提醒
+     */
     private String advice;
+    /**
+     * 店铺所属店主
+     */
+    private PersonInfo owner;
+    /**
+     * 店铺所在区域
+     */
+    private Area area;
+
+    /**
+     * 店铺类别
+     */
+    private ShopCategory shopCategory;
 
     public Long getShopId() {
         return shopId;
@@ -24,30 +40,6 @@ public class Shop {
 
     public void setShopId(Long shopId) {
         this.shopId = shopId;
-    }
-
-    public Long getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(Long ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public long getAreaId() {
-        return areaId;
-    }
-
-    public void setAreaId(long areaId) {
-        this.areaId = areaId;
-    }
-
-    public Long getShopCategoryId() {
-        return shopCategoryId;
-    }
-
-    public void setShopCategoryId(Long shopCategoryId) {
-        this.shopCategoryId = shopCategoryId;
     }
 
     public String getShopName() {
@@ -130,13 +122,34 @@ public class Shop {
         this.advice = advice;
     }
 
+    public PersonInfo getOwner() {
+        return owner;
+    }
+
+    public void setOwner(PersonInfo owner) {
+        this.owner = owner;
+    }
+
+    public Area getArea() {
+        return area;
+    }
+
+    public void setArea(Area area) {
+        this.area = area;
+    }
+
+    public ShopCategory getShopCategory() {
+        return shopCategory;
+    }
+
+    public void setShopCategory(ShopCategory shopCategory) {
+        this.shopCategory = shopCategory;
+    }
+
     @Override
     public String toString() {
         return "Shop{" +
                 "shopId=" + shopId +
-                ", ownerId=" + ownerId +
-                ", areaId=" + areaId +
-                ", shopCategoryId=" + shopCategoryId +
                 ", shopName='" + shopName + '\'' +
                 ", shopDesc='" + shopDesc + '\'' +
                 ", shopaddr='" + shopaddr + '\'' +
@@ -147,6 +160,9 @@ public class Shop {
                 ", lastEditTime=" + lastEditTime +
                 ", enableStatus=" + enableStatus +
                 ", advice='" + advice + '\'' +
+                ", owner=" + owner +
+                ", area=" + area +
+                ", shopCategory=" + shopCategory +
                 '}';
     }
 }

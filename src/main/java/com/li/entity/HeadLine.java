@@ -5,9 +5,19 @@ import java.util.Date;
 public class HeadLine {
     private Long lineId;
     private String lineName;
+    /**
+     * 头条链接
+     */
     private String lineLink;
+
+    /**
+     * 图片地址
+     */
     private String lineImg;
     private Integer priority;
+    /**
+     * 状态 0 不可用 1 可用
+     */
     private Integer enableStatus;
     private Date createTime;
     private Date lastEditTime;

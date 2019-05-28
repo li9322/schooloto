@@ -3,12 +3,20 @@ package com.li.entity;
 import java.util.Date;
 
 public class LocalAuth {
+    /**
+     * 主键
+     */
     private Long localAuthId;
-    private Long userId;
+
     private String userName;
     private String passWord;
     private Date createTime;
     private Date lastEditTime;
+
+    /**
+     * 关联的用户信息（通过用户id）
+     */
+    private PersonInfo personInfo;
 
     public Long getLocalAuthId() {
         return localAuthId;
@@ -18,12 +26,12 @@ public class LocalAuth {
         this.localAuthId = localAuthId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public PersonInfo getPersonInfo() {
+        return personInfo;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setPersonInfo(PersonInfo personInfo) {
+        this.personInfo = personInfo;
     }
 
     public String getUserName() {
@@ -62,11 +70,11 @@ public class LocalAuth {
     public String toString() {
         return "LocalAuth{" +
                 "localAuthId=" + localAuthId +
-                ", userId=" + userId +
                 ", userName='" + userName + '\'' +
                 ", passWord='" + passWord + '\'' +
                 ", createTime=" + createTime +
                 ", lastEditTime=" + lastEditTime +
+                ", personInfo=" + personInfo +
                 '}';
     }
 }
