@@ -6,7 +6,7 @@ public class Shop {
     private Long shopId;
     private String shopName;
     private String shopDesc;
-    private String shopaddr;
+    private String shopAddr;
     private String phone;
     private String shopImg;
     private Integer priority;
@@ -58,12 +58,12 @@ public class Shop {
         this.shopDesc = shopDesc;
     }
 
-    public String getShopaddr() {
-        return shopaddr;
+    public String getShopAddr() {
+        return shopAddr;
     }
 
-    public void setShopaddr(String shopaddr) {
-        this.shopaddr = shopaddr;
+    public void setShopAddr(String shopAddr) {
+        this.shopAddr = shopAddr;
     }
 
     public String getPhone() {
@@ -152,7 +152,7 @@ public class Shop {
                 "shopId=" + shopId +
                 ", shopName='" + shopName + '\'' +
                 ", shopDesc='" + shopDesc + '\'' +
-                ", shopaddr='" + shopaddr + '\'' +
+                ", shopAddr='" + shopAddr + '\'' +
                 ", phone='" + phone + '\'' +
                 ", shopImg='" + shopImg + '\'' +
                 ", priority=" + priority +
