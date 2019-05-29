@@ -53,6 +53,39 @@ public class ShopDaoTest extends BaseTest {
 
         int effectNum = shopDao.insertShop(shop);
         System.out.println(effectNum);
+    }
 
+    @Test
+    public void testUpdateShop() {
+        // shop_id 不可更新 personInfo不可更新
+        Shop shop = new Shop();
+
+        Area area = new Area();
+        ShopCategory shopCategory = new ShopCategory();
+
+        // 模拟更新 shop_id=2的记录 。 因为目前数据库中只有一条shop_id=2的数据
+        shop.setShopId(2L);
+
+        // 将area_id更新成2
+        area.setAreaId(2);
+        // 为了防止因外键约束，导致更新异常，同时也能验证更新方法没有问题
+        // 新增一条测试数据将shopCategoryId更新为2
+        shopCategory.setShopCategoryId(1L);
+
+        shop.setArea(area);
+        shop.setShopCategory(shopCategory);
+        shop.setShopName("ArtisanUP");
+        shop.setShopDesc("ArtisanDescUP");
+        shop.setShopAddr("NanJingUP");
+        shop.setPhone("123456UP");
+        shop.setShopImg("/xxx/xxx/UP");
+        shop.setPriority(66);
+        shop.setCreateTime(new Date());
+        shop.setLastEditTime(new Date());
+        shop.setEnableStatus(1);
+        shop.setAdvice("Waring UP");
+
+        int effectNum = shopDao.updateShop(shop);
+        System.out.println(effectNum);
     }
 }

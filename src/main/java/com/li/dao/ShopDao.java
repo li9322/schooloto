@@ -18,4 +18,17 @@ public interface ShopDao {
      * @return: int 受影响的行数 1即为成功 -1(mybtis返回的值)失败
      */
     int insertShop(Shop shop);
+
+    /**
+     *
+     *
+     * @Title: updateShop
+     *
+     * @Description: 更新店铺
+     *
+     * @param shop
+     *
+     * @return: int
+     */
+    int updateShop(Shop shop);
 }
