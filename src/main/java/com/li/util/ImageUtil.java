@@ -1,4 +1,4 @@
-package com.li.utils;
+package com.li.util;
 
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
