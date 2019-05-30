@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Date;
 
 /**
@@ -50,12 +51,14 @@ public class ShopServiceImpl implements ShopService {
      * 在 TransactionInterceptor拦截时，会在在目标方法开始执行之前创建并加入事务，并执行目标方法的逻辑,最后根据执行情况是否出现异常，
      * 利用抽象事务管理器AbstractPlatformTransactionManager 操作数据源DataSource 提交或回滚事务
      */
+    // 修改入参，将File类型的入参修改为InputStream,同时增加String类型的文件名称
     @Override
     @Transactional
-    public ShopExecution addShop(Shop shop, File shopImg) {
+    public ShopExecution addShop(Shop shop, InputStream shopImgInputStream, String fileName) {
         // 非空判断 (这里先判断shop是否为空，严格意义上讲shop中的are的属性也需要判断)
         if (shop == null)
             return new ShopExecution(ShopStateEnum.NULL_SHOP_INFO);
+
         // 关键步骤1. 设置基本信息，插入shop
         // 初始状态： 审核中
         shop.setEnableStatus(0);
@@ -67,10 +70,10 @@ public class ShopServiceImpl implements ShopService {
             throw new ShopOperationException("店铺创建失败");
         else
             // 关键步骤2. 添加成功,则继续处理文件,获取shopid,用于创建图片存放的目录
-            if (shopImg != null) {
+            if (shopImgInputStream != null) {
                 try {
                     // 需要根据shopId来创建目录,所以也需要shop这个入参
-                    addShopImg(shop, shopImg);
+                    addShopImg(shop, shopImgInputStream,fileName);
                 } catch (Exception e) {
                     logger.error("addShopImg error{}", e.toString());
                     throw new ShopOperationException("addShopImg error:" + e.getMessage());
@@ -92,10 +95,10 @@ public class ShopServiceImpl implements ShopService {
      * @return:void
      * @Author: li
      */
-    private void addShopImg(Shop shop, File shopImg) {
+    private void addShopImg(Shop shop,InputStream shopImgInputStream, String fileName) {
         String imgPath = FileUtil.getShopImagePath(shop.getShopId());
         // 生成图片的水印图
-        String relativeAddr = ImageUtil.generateThumbnails(shopImg, imgPath);
+        String relativeAddr = ImageUtil.generateThumbnails(shopImgInputStream, imgPath,fileName);
         // 将相对路径设置个shop,用于更新数据库
         shop.setShopImg(relativeAddr);
     }
