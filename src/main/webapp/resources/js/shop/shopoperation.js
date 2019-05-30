@@ -30,7 +30,11 @@ $(function () {
         });
     };
 
+    /**
+     * submit按钮触发的操作
+     */
     $('#submit').click(function () {
+        // 获取页面的值
         var shop = {}
         shop.shopName = $("#shop-name").val()
         shop.shopAddr = $("#shop-addr").val()
@@ -51,6 +55,7 @@ $(function () {
 
         var shopImg = $('#shop-img')[0].files[0];
 
+        // 验证码
         var verifyCodeActual = $('#j_kaptcha').val()
         console.log('verifyCodeActual:' + verifyCodeActual);
         if (!verifyCodeActual) {
@@ -58,12 +63,16 @@ $(function () {
             return;
         }
 
+        // 接收数据
         var formData = new FormData();
+
+        // 将数据封装到formData发送到后台
         formData.append('shopImg', shopImg);
         formData.append('shopStr', JSON.stringify(shop));
 
         formData.append('verufyCodeActual', verifyCodeActual);
 
+        // 利用ajax提交
         $.ajax({
             url: registerShopUrl,
             type: 'POST',
@@ -77,6 +86,7 @@ $(function () {
                 } else {
                     $.toast('提示信息' + data.errMsg);
                 }
+                // 点击提交后 不管成功失败都更换验证码，防止重复提交
                 $('#kaptcha_img').click();
             }
         })
