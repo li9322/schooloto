@@ -59,7 +59,7 @@ public class ImageUtil {
      * 图片存储的绝对路径=basePath+该路径
      * @Author: li
      */
-    public static String generateThumbnails(InputStream ins, String destPath,String fileName) {
+    public static String generateThumbnails(InputStream ins, String destPath, String fileName) {
         // 拼接后的新文件的相对路径
         String relativeAddr = null;
         try {
@@ -84,13 +84,14 @@ public class ImageUtil {
         }
         return relativeAddr;
     }
+
     /**
-    *@Description: 系统时间+5位随机数字
-    *@Param: 
-    *@return: String
-    *@Author: li
-    */
-    private static String generateRandomFileName(){
+     * @Description: 系统时间+5位随机数字
+     * @Param:
+     * @return: String
+     * @Author: li
+     */
+    private static String generateRandomFileName() {
         String sysdate = sdf.format(new Date());
         // 5位随机数 10000到99999之间 ,下面的取值[ 包括左边，不包括右边 ]，满足10000到99999
         int rannum = (int) (random.nextDouble() * (99999 - 10000 + 1)) + 10000;
@@ -98,41 +99,61 @@ public class ImageUtil {
         logger.debug("fileName: {}", randomFileName);
         return randomFileName;
     }
+
     /**
-    *@Description: 获取文件的扩展名
-    *@Param: file
-    *@return: String
-    *@Author: li
-    */
+     * @Description: 获取文件的扩展名
+     * @Param: file
+     * @return: String
+     * @Author: li
+     */
     // 修改入参File类型，直接使用String类型
-    private static String getFileExtensionName(String fileName){
+    private static String getFileExtensionName(String fileName) {
         String extension = fileName.substring(fileName.lastIndexOf("."));
-        logger.debug("extension:{}",extension);
+        logger.debug("extension:{}", extension);
         return extension;
     }
+
     /**
-    *@Description:
-    *@Param: targetAddr 图片上传的相对路径
-    *@return:
-    *@Author: li
-    */
-    private static void validateDestPath(String targetAddr){
+     * @Description:
+     * @Param: targetAddr 图片上传的相对路径
+     * @return:
+     * @Author: li
+     */
+    private static void validateDestPath(String targetAddr) {
         // 获取绝对路径
         String realFileParentPath = FileUtil.getImgBasePath() + targetAddr;
         // 不存在的话，逐级创建目录
         File dirPath = new File(realFileParentPath);
-        if (!dirPath.exists()){
+        if (!dirPath.exists()) {
             dirPath.mkdirs();
         }
     }
 
     /**
-    *@Description: 演示thumbnail的基本用法
-    *@Param: args
-    *@return: 
-    *@Author: li
-    */
-    public static void main(String[] args){
+     * @Description: 判断storePath是否为目录，为目录的话删掉目录下的所有文件，否则删掉文件
+     * @Param: storePath
+     * @return: void
+     * @Author: li
+     */
+    public static void deleteStorePath(String storePath) {
+        File fileOrMenu = new File(FileUtil.getImgBasePath() + storePath);
+        if (fileOrMenu != null) {
+            if (fileOrMenu.isDirectory()) {
+                File[] files = fileOrMenu.listFiles();
+                for (int i = 0; i < files.length; i++)
+                    files[i].delete();
+            }
+            fileOrMenu.delete();
+        }
+    }
+
+    /**
+     * @Description: 演示thumbnail的基本用法
+     * @Param: args
+     * @return:
+     * @Author: li
+     */
+    public static void main(String[] args) {
         try {
             // 需要加水印的图片
             File souceFile = new File("D:/worktest/schooloto/image/20190529142901.jpg");

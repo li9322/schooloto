@@ -42,10 +42,10 @@ public class ShopServiceImpl implements ShopService {
      * （2）在 Spring 的 AOP 代理下，只有目标方法由外部调用，目标方法才由 Spring成的代理对象来管理，这会造成自调用问题。
      * 若同一类中的其他没有@Transactional 注解的方法内部调用有@Transactional 注解的方法，
      * 有@Transactional注解的方法的事务被忽略，不会发生回滚。
-     *
+     * <p>
      * 上面的两个问题@Transactional 注解只应用到 public 方法和自调用问题，是由于使用 Spring AOP
      * 代理造成的。为解决这两个问题，可以使用 AspectJ 取代 Spring AOP 代理
-     *
+     * <p>
      * 在应用系统调用声明@Transactional 的目标方法时，Spring Framework 默认使用 AOP代理，在代码运行时生成一个代理对象，
      * 根据@Transactional 的属性配置信息，这个代理对象决定该声明@Transactional的目标方法是否由拦截器 TransactionInterceptor 来使用拦截，
      * 在 TransactionInterceptor拦截时，会在在目标方法开始执行之前创建并加入事务，并执行目标方法的逻辑,最后根据执行情况是否出现异常，
@@ -73,7 +73,7 @@ public class ShopServiceImpl implements ShopService {
             if (shopImgInputStream != null) {
                 try {
                     // 需要根据shopId来创建目录,所以也需要shop这个入参
-                    addShopImg(shop, shopImgInputStream,fileName);
+                    addShopImg(shop, shopImgInputStream, fileName);
                 } catch (Exception e) {
                     logger.error("addShopImg error{}", e.toString());
                     throw new ShopOperationException("addShopImg error:" + e.getMessage());
@@ -89,16 +89,46 @@ public class ShopServiceImpl implements ShopService {
         return new ShopExecution(ShopStateEnum.CHECK, shop);
     }
 
+    @Override
+    public Shop getShopById(long shopId) {
+        return shopDao.selectShopById(shopId);
+    }
+
+    @Override
+    @Transactional
+    public ShopExecution modifyShop(Shop shop, InputStream shopFileInputStream, String fileName) throws ShopOperationException {
+        if (shop == null || shop.getShopId() == null)
+            return new ShopExecution(ShopStateEnum.NULL_SHOP_INFO);
+        else
+            try {
+                if (shopFileInputStream != null && fileName != null && !"".equals(fileName)) {
+                    Shop tempShop = shopDao.selectShopById(shop.getShopId());
+                    if (tempShop != null)
+                        ImageUtil.deleteStorePath(tempShop.getShopImg());
+                    addShopImg(shop, shopFileInputStream, fileName);
+                }
+
+                shop.setLastEditTime(new Date());
+                int effectedNum = shopDao.updateShop(shop);
+                if (effectedNum <= 0)
+                    throw new ShopOperationException(ShopStateEnum.INNER_ERROR.getStateInfo());
+                return new ShopExecution(ShopStateEnum.SUCCESS, shop);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new ShopOperationException("modify shop error:" + e.getMessage());
+            }
+    }
+
     /**
      * @Description:根据shopId创建目录,并生成水印图片
      * @Param:shop,shopImg
      * @return:void
      * @Author: li
      */
-    private void addShopImg(Shop shop,InputStream shopImgInputStream, String fileName) {
+    private void addShopImg(Shop shop, InputStream shopImgInputStream, String fileName) {
         String imgPath = FileUtil.getShopImagePath(shop.getShopId());
         // 生成图片的水印图
-        String relativeAddr = ImageUtil.generateThumbnails(shopImgInputStream, imgPath,fileName);
+        String relativeAddr = ImageUtil.generateThumbnails(shopImgInputStream, imgPath, fileName);
         // 将相对路径设置个shop,用于更新数据库
         shop.setShopImg(relativeAddr);
     }

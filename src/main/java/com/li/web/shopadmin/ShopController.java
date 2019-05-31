@@ -11,6 +11,7 @@ import com.li.service.AreaService;
 import com.li.service.ShopCategoryService;
 import com.li.service.ShopService;
 import com.li.util.HTTPServletRequestUtil;
+import com.li.util.VerifiyCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,15 +49,22 @@ public class ShopController {
     /**
      * @Description:
      * @Param: 因为是接收前端的请求，而前端的信息都封装在HttpServletRequest中，所以需要解析HttpServletRequest，获取必要的参数
-     *
+     * <p>
      * 1. 接收并转换相应的参数，包括shop信息和图片信息 2. 注册店铺 3. 返回结果给前台
      * @return:Map<String, Object>
      * @Author: li
      */
-    @RequestMapping(value = "/registshop",method = RequestMethod.POST)
+    @RequestMapping(value = "/registshop", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> registerShop(HttpServletRequest request) {
         Map<String, Object> modelMap = new HashMap<>();
+        // 0. 验证码校验
+        if (!VerifiyCodeUtil.verifyCode(request)) {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", "验证码不正确");
+            return modelMap;
+        }
+
         // 1. 接收并转换相应的参数，包括shop信息和图片信息
 
         // 1.1 shop信息
@@ -80,15 +88,17 @@ public class ShopController {
 
         // Spring MVC中的 图片存在CommonsMultipartFile中
         CommonsMultipartFile shopImg = null;
-        // 从request的本次会话中的上线文中获取图片的相关内容
+        // 从request的本次会话中的上下文中获取图片的相关内容
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
         if (commonsMultipartResolver.isMultipart(request)) {
             MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
             // shopImg是和前端约定好的变量名
             shopImg = (CommonsMultipartFile) multipartRequest.getFile("shopImg");
         } else {
+            // 将错误信息返回给前台
             modelMap.put("success", false);
             modelMap.put("errMsg", "图片不能为空");
+            return modelMap;
         }
 
         // 2. 注册店铺
@@ -132,26 +142,26 @@ public class ShopController {
     }
 
     /**
-    *@Description:
-    *@Param:
-    *@return:
-    *@Author: li
-    */
-    @RequestMapping(value = "/getshopinitinfo",method = RequestMethod.GET)
+     * @Description:
+     * @Param:
+     * @return:
+     * @Author: li
+     */
+    @RequestMapping(value = "/getshopinitinfo", method = RequestMethod.GET)
     @ResponseBody
-    public Map<String,Object> getShopInitInfo(){
-        Map<String,Object> modelMap=new HashMap<>();
-        List<ShopCategory> shopCategoryList=null;
-        List<Area> areaList=null;
-        try{
-            shopCategoryList=shopCategoryService.getShopCategoryList(new ShopCategory());
-            areaList=areaService.getAreaList();
-            modelMap.put("success",true);
-            modelMap.put("shopCategoryList",shopCategoryList);
-            modelMap.put("areaList",areaList);
-        }catch (Exception e){
-            modelMap.put("success",false);
-            modelMap.put("errMsg",e.getMessage());
+    public Map<String, Object> getShopInitInfo() {
+        Map<String, Object> modelMap = new HashMap<>();
+        List<ShopCategory> shopCategoryList = null;
+        List<Area> areaList = null;
+        try {
+            shopCategoryList = shopCategoryService.getShopCategoryList(new ShopCategory());
+            areaList = areaService.getAreaList();
+            modelMap.put("success", true);
+            modelMap.put("shopCategoryList", shopCategoryList);
+            modelMap.put("areaList", areaList);
+        } catch (Exception e) {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", e.getMessage());
         }
         return modelMap;
     }

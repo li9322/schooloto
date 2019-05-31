@@ -6,7 +6,7 @@
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
 
     <!--  用来定义变量值，它有两个属性name和value，通过<property>定义的值会被插入到logger上下文中，可以使“${}”来使用变量-->
-    <property name="app.name" value="o2o" />
+    <property name="app.name" value="schooloto" />
     <property name="log.level" value="DEBUG"/>
     <property name="log.maxHistory" value="30"/>
     <!--<property name="log.filePath" value="${catalina.base}/logs/webapps"/>  -->
@@ -133,14 +133,14 @@
        true：表示当前logger的appender-ref和rootLogger的appender-ref都有效。
 
     -->
-    <logger name="com.artisan.o2o" level="${log.level}" additivity="true">
+    <logger name="com.li" level="${log.level}" additivity="true">
         <appender-ref ref="debugAppender" />
         <appender-ref ref="infoAppender" />
         <appender-ref ref="errorAppender" />
     </logger>
 
     <!--  【日志输出级别】   表示把>=DEBUG级别的日志都输出到debugAppender对应的file -->
-    <root level="${log.level}">
+    <root level="INFO">
         <appender-ref ref="consoleAppender" />
     </root>
 

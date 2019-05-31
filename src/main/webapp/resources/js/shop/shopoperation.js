@@ -52,7 +52,7 @@ $(function () {
                 return !this.selected;
             }).data('id')
         };
-
+        // 图片
         var shopImg = $('#shop-img')[0].files[0];
 
         // 验证码
@@ -67,7 +67,9 @@ $(function () {
         var formData = new FormData();
 
         // 将数据封装到formData发送到后台
+        // 和后端约定好，利用shopImg和 shopStr接收 shop图片信息和shop信息
         formData.append('shopImg', shopImg);
+        // 转成JSON格式，后端收到后将JSON转为实体类
         formData.append('shopStr', JSON.stringify(shop));
 
         formData.append('verufyCodeActual', verifyCodeActual);
@@ -81,7 +83,7 @@ $(function () {
             processData: false,
             cache: false,
             success: function (data) {
-                if (data.success()) {
+                if (data.success) {
                     $.toast('提示信息' + data.errMsg);
                 } else {
                     $.toast('提示信息' + data.errMsg);
