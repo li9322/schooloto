@@ -8,6 +8,7 @@ import com.li.exception.ShopOperationException;
 import com.li.service.ShopService;
 import com.li.util.FileUtil;
 import com.li.util.ImageUtil;
+import com.li.util.PageCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName: ShopServiceImpl
@@ -117,6 +120,22 @@ public class ShopServiceImpl implements ShopService {
                 e.printStackTrace();
                 throw new ShopOperationException("modify shop error:" + e.getMessage());
             }
+    }
+
+    @Override
+    public ShopExecution getShopList(Shop shopCondition, int pageIndex, int pageSize) throws ShopOperationException {
+        int rowIndex= PageCalculator.calculateRowIndex(pageIndex,pageSize);
+        List<Shop> shopList=new ArrayList<>();
+        ShopExecution se=new ShopExecution();
+        shopList=shopDao.selectShopList(shopCondition,rowIndex,pageSize);
+        int count=shopDao.selectShopCount(shopCondition);
+        if (shopList!=null){
+            se.setShopList(shopList);
+            se.setCount(count);
+        }else {
+            se.setState(ShopStateEnum.INNER_ERROR.getState());
+        }
+        return se;
     }
 
     /**

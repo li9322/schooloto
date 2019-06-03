@@ -94,4 +94,23 @@ public class ShopServiceTest extends BaseTest {
 
         System.out.println(ShopStateEnum.CHECK.getState() + "-----" + se.getState());
     }
+    @Test
+    public void testGetShopList(){
+        Shop shopCondition= new Shop();
+        PersonInfo personInfo=new PersonInfo();
+        personInfo.setUserId(1L);
+
+        shopCondition.setOwner(personInfo);
+        shopCondition.setShopName("咖啡");
+
+        ShopExecution se=shopService.getShopList(shopCondition,1,2);
+
+        System.out.println("se.getShopList().size():"+se.getShopList().size());
+        System.out.println("se.getCount():"+se.getCount());
+
+        se=shopService.getShopList(shopCondition,2,2);
+
+        System.out.println("se.getShopList().size():"+se.getShopList().size());
+        System.out.println("se.getCount():"+se.getCount());
+    }
 }

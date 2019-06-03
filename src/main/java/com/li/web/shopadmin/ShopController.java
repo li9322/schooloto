@@ -7,6 +7,7 @@ import com.li.entity.PersonInfo;
 import com.li.entity.Shop;
 import com.li.entity.ShopCategory;
 import com.li.enums.ShopStateEnum;
+import com.li.exception.ShopOperationException;
 import com.li.service.AreaService;
 import com.li.service.ShopCategoryService;
 import com.li.service.ShopService;
@@ -283,5 +284,68 @@ public class ShopController {
         return modelMap;
     }
 
+    /**
+     * @Description: 从session中获取当前person拥有的商铺列表
+     * @Param: request
+     * @return: Map<String, Object>
+     * @Author: li
+     */
+    @RequestMapping(value = "/getshoplist", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> getShopList(HttpServletRequest request) {
+        Map<String, Object> modelMap = new HashMap<>();
+        // 现在还没有做登录模块，因此session中并没有用户的信息，先模拟一下登录 要改造TODO
+        PersonInfo personInfo = new PersonInfo();
+        personInfo.setUserId(1L);
+        personInfo.setName("li");
+        request.getSession().setAttribute("user", personInfo);
+        // 从session中获取user信息
+        personInfo = (PersonInfo) request.getSession().getAttribute("user");
 
+        try {
+            Shop shopCondition = new Shop();
+            shopCondition.setOwner(personInfo);
+            ShopExecution se = shopService.getShopList(shopCondition, 1, 99);
+            modelMap.put("success", true);
+            modelMap.put("shopList", se.getShopList());
+            modelMap.put("user", personInfo);
+        } catch (ShopOperationException e) {
+            e.printStackTrace();
+            modelMap.put("success", false);
+            modelMap.put("errMsg", e.getMessage());
+        }
+        return modelMap;
+    }
+
+
+    /**
+     * @Description: 从商铺列表页面中，点击“进入”按钮进入
+     *    某个商铺的管理页面的时候，对session中的数据的校验从而进行页面的跳转，是否跳转到店铺列表页面或者可以直接操作该页面
+     *     访问形式如下   http://ip:port/schoolo2o/shopadmin/shopmanagement?shopId=xxx
+     * @Param: request
+     * @return: Map<String, Object>
+     */
+    @RequestMapping(value = "/getshopmanageInfo", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> getShopManageInfo(HttpServletRequest request) {
+        Map<String,Object> modelMap=new HashMap<>();
+        long shopId=HTTPServletRequestUtil.getLong(request,"shopId");
+        if (shopId<0){
+            Shop currentShop= (Shop) request.getSession().getAttribute("currentShop");
+            if (currentShop==null){
+                modelMap.put("redirect",true);
+                modelMap.put("url","/schooloto/shopadmin/shoplist");
+            }else {
+                modelMap.put("redirect",false);
+                modelMap.put("shopId",currentShop.getShopId());
+            }
+        }else {
+            Shop shop=new Shop();
+            shop.setShopId(shopId);
+
+            request.getSession().setAttribute("currentShop",shop);
+             modelMap.put("redirect",false);
+        }
+        return modelMap;
+    }
 }

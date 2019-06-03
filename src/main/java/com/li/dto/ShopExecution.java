@@ -37,6 +37,8 @@ public class ShopExecution {
      */
     private List<Shop> shopList;
 
+    public ShopExecution() { }
+
     /**
      *
      * @Title:ShopExecution
