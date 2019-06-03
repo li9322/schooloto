@@ -106,8 +106,13 @@ public class ShopController {
             // Session TODO
             // 店主persionInfo的信息，肯定要登录才能注册店铺。
             // 所以这部分信息我们从session中获取，尽量不依赖前端,这里暂时时不具备条件，后续改造，先硬编码，方便单元测试
-            PersonInfo personInfo = new PersonInfo();
-            personInfo.setUserId(1L);
+            //PersonInfo personInfo = new PersonInfo();
+            //personInfo.setUserId(1L);
+
+            // 注册店铺之前登录，登录成功后，约定好将user这个key 设置到session中，
+            // 这里通过key就可以取到PersonInfo的信息
+            PersonInfo personInfo = (PersonInfo) request.getSession().getAttribute("user");
+            shop.setOwner(personInfo);
 
             shop.setOwner(personInfo);
             // 注册店铺
@@ -165,4 +170,118 @@ public class ShopController {
         }
         return modelMap;
     }
+
+    /**
+     * @Description:根据shopId获取shop信息，接收前端的请求，获取shopId ，所以入参为HttpServletRequest
+     * @ResponseBody不需要VIEW展现层模块，直接显示到客户端的内容。 将内容或对象作为 HTTP 响应正文返回
+     * @return: Map<String, Object>
+     * @Author: li
+     */
+    @RequestMapping(value = "/getshopinfobyid", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> getShopInfoById(HttpServletRequest request) {
+        Map<String, Object> modelMap = new HashMap<>();
+        // shopId 为和前端约定好的变量
+        int shopId = HTTPServletRequestUtil.getInt(request, "shopId");
+        try {
+            if (shopId >= 0) {
+                // 查询 ，按照设计，我们希望前端页面下拉列表中可以修改区域信息，所以需要查询出来全量的区域列表
+                // 对已ShopCategory而言，我们DAO层的SQL已经将shop_category_id和
+                // shop_category_name 查询出来，前端设置到对应的属性上即可。没有必要全部查询出来。
+                Shop shop = shopService.getShopById(shopId);
+                List<Area> areaList = areaService.getAreaList();
+
+                modelMap.put("success", true);
+                modelMap.put("shop", shop);
+                modelMap.put("areaList", areaList);
+            } else {
+                modelMap.put("success", false);
+                modelMap.put("errrMsg", "shopId不合法");
+            }
+        } catch (Exception e) {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", e.getMessage());
+        }
+        return modelMap;
+    }
+
+    /**
+     * @Description:
+     * @Param: 因为是接收前端的请求，而前端的信息都封装在HttpServletRequest中，所以需要解析HttpServletRequest，获取必要的参数
+     * 1. 接收并转换相应的参数，包括shop信息和图片信息 2.修改店铺 3. 返回结果给前台
+     * @return: Map<String, Object>
+     * @Author: li
+     */
+    @RequestMapping(value = "/modifyshop", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> modifyShop(HttpServletRequest request) {
+        Map<String, Object> modelMap = new HashMap<>();
+
+        // 0. 验证码校验
+        if (!VerifiyCodeUtil.verifyCode(request)) {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", "验证码不正确");
+            return modelMap;
+        }
+        // 1. 接收并转换相应的参数，包括shop信息和图片信息
+        // 1.1 shop信息
+        // shopStr 是和前端约定好的参数值，后端从request中获取request这个值来获取shop的信息
+        String shopStr = HTTPServletRequestUtil.getString(request, "shopStr");
+        // 使用jackson-databind 将json转换为pojo
+        ObjectMapper mapper = new ObjectMapper();
+        Shop shop = null;
+        try {
+            // 将json转换为pojo
+            shop = mapper.readValue(shopStr, Shop.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 将错误信息返回给前台
+            modelMap.put("success", false);
+            modelMap.put("errMsg", e.getMessage());
+            return modelMap;
+        }
+
+        // 1.2 图片信息 基于Apache Commons FileUpload的文件上传 （ 修改商铺信息 图片可以不更新）
+
+        // Spring MVC中的 图片存在CommonsMultipartFile中
+        CommonsMultipartFile shopImg = null;
+        // 从request的本次会话中的上线文中获取图片的相关内容
+        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+        if (commonsMultipartResolver.isMultipart(request)) {
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+            // shopImg是和前端约定好的变量名
+            shopImg = (CommonsMultipartFile) multipartRequest.getFile("shopImg");
+        }
+
+        // 2. 修改店铺
+        if (shop != null && shop.getShopId() != null) {
+            // Session 部分的 PersonInfo 修改商铺是不需要的设置的。
+            // 修改店铺
+            ShopExecution se = null;
+            try {
+                if (shopImg != null)
+                    se = shopService.modifyShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
+                else
+                    se = shopService.modifyShop(shop, null, null);
+                // 成功
+                if (se.getState() == ShopStateEnum.SUCCESS.getState()) {
+                    modelMap.put("success", true);
+                    modelMap.put("errMsg", "修改成功");
+                } else {
+                    modelMap.put("success", false);
+                    modelMap.put("errMsg", se.getStateInfo());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                modelMap.put("success", false);
+                modelMap.put("errMsg", "ModifyShop Error");
+            }
+        } else {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", "ShopId不合法");
+        }
+        return modelMap;
+    }
+
+
 }
