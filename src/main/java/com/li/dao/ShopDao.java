@@ -51,4 +51,6 @@ public interface ShopDao {
     *@Author: li
     */
     Shop selectShopById(long shopId);
+
+
 }
