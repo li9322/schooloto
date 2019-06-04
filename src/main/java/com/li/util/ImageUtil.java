@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.imageio.ImageIO;
+import java.beans.IntrospectionException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -163,7 +164,9 @@ public class ImageUtil {
             File warterMarkFile = FileUtil.getWaterMarkFile();
             logger.info("warterMarkFileName: {}", warterMarkFile.getName());
             // 加水印
-            Thumbnails.of(souceFile).size(500, 500).watermark(Positions.BOTTOM_RIGHT, ImageIO.read(warterMarkFile), 0.25f).outputQuality(0.8).toFile(destFile);
+            Thumbnails.of(souceFile).size(500, 500).
+                    watermark(Positions.BOTTOM_RIGHT, ImageIO.read(warterMarkFile), 0.25f).
+                    outputQuality(0.8).toFile(destFile);
             logger.info("水印添加成功,带有水印的图片{}", destFile.getAbsolutePath());
 
             generateRandomFileName();

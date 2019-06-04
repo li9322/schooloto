@@ -297,7 +297,7 @@ public class ShopController {
         // 现在还没有做登录模块，因此session中并没有用户的信息，先模拟一下登录 要改造TODO
         PersonInfo personInfo = new PersonInfo();
         personInfo.setUserId(1L);
-        personInfo.setName("li");
+        personInfo.setName("Artisan");
         request.getSession().setAttribute("user", personInfo);
         // 从session中获取user信息
         personInfo = (PersonInfo) request.getSession().getAttribute("user");
@@ -320,31 +320,36 @@ public class ShopController {
 
     /**
      * @Description: 从商铺列表页面中，点击“进入”按钮进入
-     *    某个商铺的管理页面的时候，对session中的数据的校验从而进行页面的跳转，是否跳转到店铺列表页面或者可以直接操作该页面
-     *     访问形式如下   http://ip:port/schoolo2o/shopadmin/shopmanagement?shopId=xxx
+     * 某个商铺的管理页面的时候，对session中的数据的校验从而进行页面的跳转，是否跳转到店铺列表页面或者可以直接操作该页面
+     * 访问形式如下   http://ip:port/schoolo2o/shopadmin/shopmanagement?shopId=xxx
      * @Param: request
      * @return: Map<String, Object>
      */
     @RequestMapping(value = "/getshopmanageInfo", method = RequestMethod.GET)
     @ResponseBody
     public Map<String, Object> getShopManageInfo(HttpServletRequest request) {
-        Map<String,Object> modelMap=new HashMap<>();
-        long shopId=HTTPServletRequestUtil.getLong(request,"shopId");
-        if (shopId<0){
-            Shop currentShop= (Shop) request.getSession().getAttribute("currentShop");
-            if (currentShop==null){
-                modelMap.put("redirect",true);
-                modelMap.put("url","/schooloto/shopadmin/shoplist");
-            }else {
-                modelMap.put("redirect",false);
-                modelMap.put("shopId",currentShop.getShopId());
+        Map<String, Object> modelMap = new HashMap<>();
+        //获取shopId
+        long shopId = HTTPServletRequestUtil.getLong(request, "shopId");
+        if (shopId < 0) {
+            //尝试从session中获取
+            Shop currentShop = (Shop) request.getSession().getAttribute("currentShop");
+            //如果shopId不合法
+            if (currentShop == null) {
+                //session中也没有shop信息，重定向
+                modelMap.put("redirect", true);
+                modelMap.put("url", "/schooloto/shopadmin/shoplist");
+            } else {
+                //进入该页面
+                modelMap.put("redirect", false);
+                modelMap.put("shopId", currentShop.getShopId());
             }
-        }else {
-            Shop shop=new Shop();
+        } else {//shopId合法
+            Shop shop = new Shop();
             shop.setShopId(shopId);
-
-            request.getSession().setAttribute("currentShop",shop);
-             modelMap.put("redirect",false);
+            //将currentShop放入session中
+            request.getSession().setAttribute("currentShop", shop);
+            modelMap.put("redirect", false);
         }
         return modelMap;
     }
