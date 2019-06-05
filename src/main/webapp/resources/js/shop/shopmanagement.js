@@ -2,7 +2,7 @@ $(function () {
     // 获取shopId
     var shopId = getQueryString("shopId");
     // 商铺管理的url
-    var shopInfoUrl = '/schooloto/shopadmin/getshopmanageinfo?shopId' + shopId;
+    var shopInfoUrl = '/schooloto/shopadmin/getshopmanageinfo?shopId=' + shopId;
 
     $.getJSON(shopInfoUrl, function (data) {
         // 如果后台返回redirect=true,则跳转后台到设置的url
@@ -13,7 +13,7 @@ $(function () {
             if (data.shopId != undefined && data.shopId != null) {
                 shopId = data.shopId;
             }
-            $('#shopInfo').attr('href', '/schooloto/shopadmin/shopoperation?shopId' + shopId);
+            $('#shopInfo').attr('href', '/schooloto/shopadmin/shopoperation?shopId=' + shopId);
             $('#productCategory').attr('href','/schooloto/shopadmin/productcategorymanage?shopId=' + shopId);
         }
     });

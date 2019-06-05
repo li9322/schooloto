@@ -9,10 +9,32 @@ public class ProductCategory {
     private String productCategoryDesc;
     private Integer priority;
     private Date createTime;
+    private Date lastEditTime;
     /**
      * 店铺id,表名该产品目录是哪个店铺下的
      */
     private Long shopId;
+
+    @Override
+    public String toString() {
+        return "ProductCategory{" +
+                "productCategoryId=" + productCategoryId +
+                ", productCategoryName='" + productCategoryName + '\'' +
+                ", productCategoryDesc='" + productCategoryDesc + '\'' +
+                ", priority=" + priority +
+                ", createTime=" + createTime +
+                ", lastEditTime=" + lastEditTime +
+                ", shopId=" + shopId +
+                '}';
+    }
+
+    public Date getLastEditTime() {
+        return lastEditTime;
+    }
+
+    public void setLastEditTime(Date lastEditTime) {
+        this.lastEditTime = lastEditTime;
+    }
 
     public Long getProductCategoryId() {
         return productCategoryId;
@@ -54,14 +76,12 @@ public class ProductCategory {
         this.shopId = shopId;
     }
 
-    @Override
-    public String toString() {
-        return "ProductCategory{" +
-                "productCategoryId=" + productCategoryId +
-                ", productCategoryName='" + productCategoryName + '\'' +
-                ", priority=" + priority +
-                ", createTime=" + createTime +
-                ", shopId=" + shopId +
-                '}';
+    public String getProductCategoryDesc() {
+        return productCategoryDesc;
     }
+
+    public void setProductCategoryDesc(String productCategoryDesc) {
+        this.productCategoryDesc = productCategoryDesc;
+    }
+
 }
