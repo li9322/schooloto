@@ -57,4 +57,12 @@ public class ProductCategoryServiceTest extends BaseTest {
         System.out.println(productCategoryExecution.getState());
         System.out.println(productCategoryExecution.getProductCategoryList().size());
     }
+
+    @Test
+    public void testDeleteProductCategory(){
+        ProductCategoryExecution productCategoryExecution=productCategoryService.deleteProductCategory(4,2);
+        System.out.println(productCategoryExecution.getState());
+        ProductCategoryExecution productCategoryExecution2=productCategoryService.deleteProductCategory(7,2);
+        System.out.println(productCategoryExecution2.getState());
+    }
 }

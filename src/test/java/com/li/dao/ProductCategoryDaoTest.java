@@ -2,6 +2,7 @@ package com.li.dao;
 
 import com.li.BaseTest;
 import com.li.entity.ProductCategory;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

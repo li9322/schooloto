@@ -36,9 +36,10 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     @Override
     @Transactional
     public ProductCategoryExecution addProductCategory(List<ProductCategory> productCategoryList) throws ProductCategoryOperationException {
-
+        // 非空判断
         if (productCategoryList!=null && productCategoryList.size()>0){
             try {
+                // 批量增加ProductCategory
                 int effectNum=productCategoryDao.batchInsertProductCategory(productCategoryList);
                 if (effectNum>0)
                     return new ProductCategoryExecution(ProductCategoryStateEnum.SUCCESS,productCategoryList,effectNum);
@@ -50,6 +51,24 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             }
         }else {
             return new ProductCategoryExecution(ProductCategoryStateEnum.EMPETY_LIST);
+        }
+    }
+
+    /**
+     * TODO 需要先将该商品目录下的商品的类别Id置为空，然后再删除该商品目录， 因此需要事务控制@Transactional
+     */
+    @Override
+    @Transactional
+    public ProductCategoryExecution deleteProductCategory(long productCategoryId, long shopId) throws ProductCategoryOperationException {
+
+        try {
+            int effectNum=productCategoryDao.deleteProductCategory(productCategoryId,shopId);
+            if (effectNum>0)
+                return new ProductCategoryExecution(ProductCategoryStateEnum.SUCCESS);
+            else
+                return new ProductCategoryExecution(ProductCategoryStateEnum.INNER_ERROR);
+        }catch (Exception e){
+            throw new ProductCategoryOperationException(e.getMessage());
         }
     }
 }

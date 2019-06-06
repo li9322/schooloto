@@ -5,14 +5,17 @@ $(function () {
 
     var getProductCategoryURL = '/schooloto/shopadmin/getproductcategorybyshopid';
     var addProductCategoryURL = '/schooloto/shopadmin/addproductcategory';
+    var deleteProductCategoryURL = '/schooloto/shopadmin/removeproductcategory';
+
+
     // 调用getProductCategoryList，加载数据
     getProductCategoryList();
 
     function getProductCategoryList() {
-        $.getJSON(productCategoryURL, function (data) {
+        $.getJSON(getProductCategoryURL, function (data) {
             if (data.success) {
                 var dataList = data.data;
-                console.log(dataList);
+                // console.log(dataList);
                 $('.product-categroy-wrap').html('');
                 var tempHtml = '';
                 dataList.map(function (item, index) {
@@ -23,7 +26,7 @@ $(function () {
                         + '<div class="col-33"><a href="#" class="button delete" data-id=" ' + item.productCategoryId + '">删除</a></div>'
                         + '</div>';
                 });
-                console.log(tempHtml);
+                //console.log(tempHtml);
                 $('.product-categroy-wrap').append(tempHtml);
             }
         });
@@ -55,14 +58,14 @@ $(function () {
         });
 
         $.ajax({
-            url:addProductCategoryURL,
-            type:'POST',
+            url: addProductCategoryURL,
+            type: 'POST',
             // 后端通过 @HttpRequestBody直接接收
-            data:JSON.stringify(productCategoryList),
-            contentType:'application/json',
-            success:function (data) {
-                if (data.success){
-                    $.toast('新增['+data.effectNum+']条成功!');
+            data: JSON.stringify(productCategoryList),
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.success) {
+                    $.toast('新增[' + data.effectNum + ']条成功!');
                     // 重新加载数据
                     getProductCategoryList();
                 } else {
@@ -72,4 +75,61 @@ $(function () {
         });
 
     });
+
+    // 一种是需要提交到后台的删除  now  ，另外一种是 新增但未提交到数据库中的删除 temp
+
+    $('.product-categroy-wrap').on('click', '.row-product-category.now .delete', function (e) {
+        var target = e.currentTarget;
+        $.confirm('确定么？', function () {
+            $.ajax({
+                url: deleteProductCategoryURL,
+                type: 'POST',
+                data: {
+                    productCategoryId: target.dataset.id,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.success) {
+                        $.toast('删除成功!');
+                        // console.log("删除成功");
+                        // 重新加载数据
+                        getProductCategoryList();
+                    } else {
+                        $.toast('删除失败！');
+                    }
+                }
+            });
+        });
+    });
+
+
+    // $('.product-categroy-wrap').on('click', '.row-product-category.now .delete',
+    //     function (e) {
+    //         var target = e.currentTarget;
+    //         $.confirm('确定么?', function () {
+    //             $.ajax({
+    //                 url: deleteProductCategoryUrl,
+    //                 type: 'POST',
+    //                 data: {
+    //                     productCategoryId: target.dataset.id,
+    //                 },
+    //                 dataType: 'json',
+    //                 success: function (data) {
+    //                     if (data.success) {
+    //                         $.toast('删除成功！');
+    //                         // 重新加载数据
+    //                         getProductCategoryList();
+    //                     } else {
+    //                         $.toast('删除失败！');
+    //                     }
+    //                 }
+    //             });
+    //         });
+    //     });
+
+
+    $('.product-categroy-wrap').on('click', '.row-product-category.temp .delete', function (e) {
+        $(this).parent().parent().remove();
+    });
+
 });

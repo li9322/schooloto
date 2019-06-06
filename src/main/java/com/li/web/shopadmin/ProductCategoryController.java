@@ -35,49 +35,93 @@ public class ProductCategoryController {
     /**
      * @Description: 根据ShopId获取productCategory
      * @Param: request
-     * @return: Result<List<ProductCategory>>
+     * @return: Result<List < ProductCategory>>
      */
-    @RequestMapping(value = "/getproductcategorybyshopid",method = RequestMethod.GET)
+    @RequestMapping(value = "/getproductcategorybyshopid", method = RequestMethod.GET)
     @ResponseBody
-    public Result<List<ProductCategory>> getProductCategoryByShopId(HttpServletRequest request){
+    public Result<List<ProductCategory>> getProductCategoryByShopId(HttpServletRequest request) {
         List<ProductCategory> productCategoryList;
         ProductCategoryStateEnum ps;
         // 在进入到
         // shop管理页面（即调用getShopManageInfo方法时）,如果shopId合法，便将该shop信息放在了session中，key为currentShop
         // 这里我们不依赖前端的传入，因为不安全。 我们在后端通过session来做
-        Shop currentShop= (Shop) request.getSession().getAttribute("currentShop");
+        Shop currentShop = (Shop) request.getSession().getAttribute("currentShop");
 
-        if (currentShop!=null&& currentShop.getShopId()!=null) {
+        if (currentShop != null && currentShop.getShopId() != null) {
             try {
-                productCategoryList=productCategoryService.queryProductCategoryList(currentShop.getShopId());
+                productCategoryList = productCategoryService.queryProductCategoryList(currentShop.getShopId());
                 return new Result<List<ProductCategory>>(true, productCategoryList);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-                ps=ProductCategoryStateEnum.INNER_ERROR;
-                return new Result<>(false,ps.getState(),ps.getStateInfo());
+                ps = ProductCategoryStateEnum.INNER_ERROR;
+                return new Result<>(false, ps.getState(), ps.getStateInfo());
             }
-        }else {
-            ps=ProductCategoryStateEnum.NULL_SHOP;
-            return new Result<>(false,ps.getState(),ps.getStateInfo());
+        } else {
+            ps = ProductCategoryStateEnum.NULL_SHOP;
+            return new Result<>(false, ps.getState(), ps.getStateInfo());
         }
     }
 
-    @RequestMapping(value = "/addproductcategory",method = RequestMethod.POST)
+    /**
+     * @Description:添加商铺目录，使用@RequestBody接收前端传递过来的productCategoryList
+     * @Param:productCategoryList
+     * @Param:request
+     * @return:Map<String,Object>
+     */
+    @RequestMapping(value = "/addproductcategory", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String,Object> addProductCategory(@RequestBody List<ProductCategory> productCategoryList,HttpServletRequest request){
-        Map<String,Object> modelMap=new HashMap<>();
-        if (productCategoryList!=null&& productCategoryList.size()>0){
-
-            Shop currentShop= (Shop) request.getSession().getAttribute("currentShop");
-            if (currentShop!=null&& currentShop.getShopId()!=null){
-                for (ProductCategory productCategory:productCategoryList)
+    public Map<String, Object> addProductCategory(@RequestBody List<ProductCategory> productCategoryList, HttpServletRequest request) {
+        Map<String, Object> modelMap = new HashMap<>();
+        if (productCategoryList != null && productCategoryList.size() > 0) {
+            // 从session中获取shop的信息
+            Shop currentShop = (Shop) request.getSession().getAttribute("currentShop");
+            if (currentShop != null && currentShop.getShopId() != null) {
+                // 为ProductCategory设置shopId
+                for (ProductCategory productCategory : productCategoryList)
                     productCategory.setShopId(currentShop.getShopId());
 
                 try {
-                    ProductCategoryExecution pce=productCategoryService.addProductCategory(productCategoryList);
+                    // 批量插入
+                    ProductCategoryExecution pce = productCategoryService.addProductCategory(productCategoryList);
+                    if (pce.getState() == ProductCategoryStateEnum.SUCCESS.getState()) {
+                        modelMap.put("success", true);
+                        // 同时也将新增成功的数量返回给前台
+                        modelMap.put("effectNum", pce.getCount());
+                    } else {
+                        modelMap.put("success", false);
+                        modelMap.put("errMsg", pce.getStateInfo());
+                    }
+                } catch (ProductCategoryOperationException e) {
+                    e.printStackTrace();
+                    modelMap.put("success", false);
+                    modelMap.put("errMsg", e.getMessage());
+                    return modelMap;
+                }
+            } else {
+                modelMap.put("success", false);
+                modelMap.put("errMsg", ProductCategoryStateEnum.NULL_SHOP.getStateInfo());
+            }
+        } else {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", "至少输入一个店铺目录信息");
+        }
+        return modelMap;
+    }
+
+    @RequestMapping(value = "/removeproductcategory", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> removeProductCategory(Long productCategoryId, HttpServletRequest request) {
+        Map<String, Object> modelMap = new HashMap<>();
+        System.out.println("--------------------------------------");
+        if (productCategoryId != null && productCategoryId > 0) {
+
+            Shop currentShop= (Shop) request.getSession().getAttribute("currentShop");
+            if (currentShop!=null && currentShop.getShopId()!=null){
+                try {
+                    Long shopId =currentShop.getShopId();
+                    ProductCategoryExecution pce=productCategoryService.deleteProductCategory(productCategoryId,shopId);
                     if (pce.getState()==ProductCategoryStateEnum.SUCCESS.getState()){
                         modelMap.put("success",true);
-                        modelMap.put("effectNum",pce.getCount());
                     }else {
                         modelMap.put("success",false);
                         modelMap.put("errMsg",pce.getStateInfo());
@@ -94,7 +138,7 @@ public class ProductCategoryController {
             }
         }else {
             modelMap.put("success",false);
-            modelMap.put("errMsg","至少输入一个店铺目录信息");
+            modelMap.put("errMsg","请选择商品类别");
         }
         return modelMap;
     }
