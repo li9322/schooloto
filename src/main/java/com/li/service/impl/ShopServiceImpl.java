@@ -1,6 +1,7 @@
 package com.li.service.impl;
 
 import com.li.dao.ShopDao;
+import com.li.dto.ImageHolder;
 import com.li.dto.ShopExecution;
 import com.li.entity.Shop;
 import com.li.enums.ShopStateEnum;
@@ -57,7 +58,7 @@ public class ShopServiceImpl implements ShopService {
     // 修改入参，将File类型的入参修改为InputStream,同时增加String类型的文件名称
     @Override
     @Transactional
-    public ShopExecution addShop(Shop shop, InputStream shopImgInputStream, String fileName) {
+    public ShopExecution addShop(Shop shop, ImageHolder imageHolder) {
         // 非空判断 (这里先判断shop是否为空，严格意义上讲shop中的are的属性也需要判断)
         if (shop == null)
             return new ShopExecution(ShopStateEnum.NULL_SHOP_INFO);
@@ -73,10 +74,10 @@ public class ShopServiceImpl implements ShopService {
             throw new ShopOperationException("店铺创建失败");
         else
             // 关键步骤2. 添加成功,则继续处理文件,获取shopid,用于创建图片存放的目录
-            if (shopImgInputStream != null) {
+            if (imageHolder.getIns() != null) {
                 try {
                     // 需要根据shopId来创建目录,所以也需要shop这个入参
-                    addShopImg(shop, shopImgInputStream, fileName);
+                    addShopImg(shop, imageHolder);
                 } catch (Exception e) {
                     logger.error("addShopImg error{}", e.toString());
                     throw new ShopOperationException("addShopImg error:" + e.getMessage());
@@ -99,16 +100,16 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     @Transactional
-    public ShopExecution modifyShop(Shop shop, InputStream shopFileInputStream, String fileName) throws ShopOperationException {
+    public ShopExecution modifyShop(Shop shop, ImageHolder imageHolder) throws ShopOperationException {
         if (shop == null || shop.getShopId() == null)
             return new ShopExecution(ShopStateEnum.NULL_SHOP_INFO);
         else
             try {
-                if (shopFileInputStream != null && fileName != null && !"".equals(fileName)) {
+                if (imageHolder.getIns() != null && imageHolder.getFileName() != null && !"".equals(imageHolder.getFileName())) {
                     Shop tempShop = shopDao.selectShopById(shop.getShopId());
                     if (tempShop != null)
                         ImageUtil.deleteStorePath(tempShop.getShopImg());
-                    addShopImg(shop, shopFileInputStream, fileName);
+                    addShopImg(shop, imageHolder);
                 }
 
                 shop.setLastEditTime(new Date());
@@ -124,15 +125,15 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public ShopExecution getShopList(Shop shopCondition, int pageIndex, int pageSize) throws ShopOperationException {
-        int rowIndex= PageCalculator.calculateRowIndex(pageIndex,pageSize);
-        List<Shop> shopList=new ArrayList<>();
-        ShopExecution se=new ShopExecution();
-        shopList=shopDao.selectShopList(shopCondition,rowIndex,pageSize);
-        int count=shopDao.selectShopCount(shopCondition);
-        if (shopList!=null){
+        int rowIndex = PageCalculator.calculateRowIndex(pageIndex, pageSize);
+        List<Shop> shopList = new ArrayList<>();
+        ShopExecution se = new ShopExecution();
+        shopList = shopDao.selectShopList(shopCondition, rowIndex, pageSize);
+        int count = shopDao.selectShopCount(shopCondition);
+        if (shopList != null) {
             se.setShopList(shopList);
             se.setCount(count);
-        }else {
+        } else {
             se.setState(ShopStateEnum.INNER_ERROR.getState());
         }
         return se;
@@ -144,10 +145,10 @@ public class ShopServiceImpl implements ShopService {
      * @return:void
      * @Author: li
      */
-    private void addShopImg(Shop shop, InputStream shopImgInputStream, String fileName) {
+    private void addShopImg(Shop shop, ImageHolder imageHolder) {
         String imgPath = FileUtil.getShopImagePath(shop.getShopId());
         // 生成图片的水印图
-        String relativeAddr = ImageUtil.generateThumbnails(shopImgInputStream, imgPath, fileName);
+        String relativeAddr = ImageUtil.generateThumbnails(imageHolder.getIns(), imgPath, imageHolder.getFileName());
         // 将相对路径设置个shop,用于更新数据库
         shop.setShopImg(relativeAddr);
     }

@@ -1,6 +1,7 @@
 package com.li.web.shopadmin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.li.dto.ImageHolder;
 import com.li.dto.ShopExecution;
 import com.li.entity.Area;
 import com.li.entity.PersonInfo;
@@ -55,13 +56,12 @@ public class ShopController {
      * @return:Map<String, Object>
      * @Author: li
      */
-    @RequestMapping(value = "/registshop", method = RequestMethod.POST)
+    @RequestMapping(value = "/registershop", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> registerShop(HttpServletRequest request) {
         Map<String, Object> modelMap = new HashMap<>();
         // 0. 验证码校验
         if (!VerifiyCodeUtil.verifyCode(request)) {
-            modelMap.put("success", false);
             modelMap.put("errMsg", "验证码不正确");
             return modelMap;
         }
@@ -114,8 +114,6 @@ public class ShopController {
             // 这里通过key就可以取到PersonInfo的信息
             PersonInfo personInfo = (PersonInfo) request.getSession().getAttribute("user");
             shop.setOwner(personInfo);
-
-            shop.setOwner(personInfo);
             // 注册店铺
 
             // se = shopService.addShop(shop, shopImg); 改造前的调用方式
@@ -127,7 +125,7 @@ public class ShopController {
             // 主要是为了service层单元测测试的方便，因为service层很难实例化出一个CommonsMultipartFile类型的实例
             ShopExecution se = null;
             try {
-                se = shopService.addShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
+                se = shopService.addShop(shop, new ImageHolder(shopImg.getInputStream(), shopImg.getOriginalFilename()));
                 if (se.getState() == ShopStateEnum.CHECK.getState()) {
                     modelMap.put("success", true);
                     modelMap.put("errrMsg", "注册成功");
@@ -261,9 +259,9 @@ public class ShopController {
             ShopExecution se = null;
             try {
                 if (shopImg != null)
-                    se = shopService.modifyShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
+                    se = shopService.modifyShop(shop, new ImageHolder(shopImg.getInputStream(), shopImg.getOriginalFilename()));
                 else
-                    se = shopService.modifyShop(shop, null, null);
+                    se = shopService.modifyShop(shop, new ImageHolder(null,null));
                 // 成功
                 if (se.getState() == ShopStateEnum.SUCCESS.getState()) {
                     modelMap.put("success", true);

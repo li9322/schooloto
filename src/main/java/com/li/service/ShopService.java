@@ -1,5 +1,6 @@
 package com.li.service;
 
+import com.li.dto.ImageHolder;
 import com.li.dto.ShopExecution;
 import com.li.entity.Shop;
 import com.li.exception.ShopOperationException;
@@ -16,7 +17,23 @@ import java.io.InputStream;
 public interface ShopService {
     //    ShopExecution addShop(Shop shop, File shopFile);
     // 修改入参，将File类型的入参修改为InputStream,同时增加String类型的文件名称
-    ShopExecution addShop(Shop shop, InputStream shopFileInputStream, String fileName);
+
+    /**
+     * @Description: 重构后的方法，将shopFileInputStream和fileName封装到ImageHolder类中
+     * <p>
+     * 重构之前的入参为：Shop shop, InputStream shopFileInputStream, String fileName
+     * <p>
+     * 因为在处理添加商品的时候，既需要处理商品的缩略图 ，又需要处理多个商品详情图片，如果还是直接传inputstream
+     * 和 filename的话 就需要5个参数，不方便调用。
+     * <p>
+     * 所里这里选择将inputstream 和 filename封装到ImageHolder中，方便调用。
+     * <p>
+     * 所里这里也需要重构
+     * @Param: shop
+     * @Param: imageHolder
+     * @return:
+     */
+    ShopExecution addShop(Shop shop, ImageHolder imageHolder)throws ShopOperationException;
 
     /**
      * @Description: 根据shopId查询商铺
@@ -34,7 +51,7 @@ public interface ShopService {
      * @return:ShopExecution
      * @Author: li
      */
-    ShopExecution modifyShop(Shop shop, InputStream shopFileInputStream, String fileName) throws ShopOperationException;
+    ShopExecution modifyShop(Shop shop, ImageHolder imageHolder) throws ShopOperationException;
 
     /**
      * @Description: 获取商铺列表. 在这一个方法中同样的会调用查询总数的DAO层方法，封装到ShopExecution中

@@ -10,7 +10,7 @@ $(function () {
     // 获取基本信息的URL
     var initUrl = "/schooloto/shopadmin/getshopinitinfo";
     // 注册店铺的URL
-    var registerShopUrl = "/schooloto/shopadmin/registshop";
+    var registerShopUrl = "/schooloto/shopadmin/registershop";
 
     // 通过shopId获取商铺信息的URL
     var getShopInfoByShopId = '/schooloto/shopadmin/getshopinfobyid?shopId=' + shopId;
@@ -128,8 +128,9 @@ $(function () {
         // 转成JSON格式，后端收到后将JSON转为实体类
         formData.append('shopStr', JSON.stringify(shop));
 
-        formData.append('verufyCodeActual', verifyCodeActual);
-
+        formData.append('verifyCodeActual', verifyCodeActual);
+        // console.log('formData:' + formData.has('verufyCodeActual'));
+        // console.log('formData:verufyCodeActual' + formData.get('verufyCodeActual'));
         // 利用ajax提交
         $.ajax({
             // 动态判断 url

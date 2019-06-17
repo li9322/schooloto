@@ -24,11 +24,13 @@ public class VerifiyCodeUtil {
     public static boolean verifyCode(HttpServletRequest request) {
         // 图片中的验证码
         String verifyCodeEXpected = (String) request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
+//        System.out.println(" 图片中的验证码:"+verifyCodeEXpected);
         logger.debug("verifyCodeExpected:{}", verifyCodeEXpected);
         // 用户输入的验证码
         String verifyCodeActual = HTTPServletRequestUtil.getString(request, "verifyCodeActual");
+//        System.out.println(" 用户输入的验证码:"+verifyCodeActual);
         logger.debug("verifyCodeActual:{}", verifyCodeActual);
-        if (verifyCodeActual == null || !verifyCodeActual.equals(verifyCodeEXpected))
+        if (verifyCodeActual == null || !verifyCodeActual.equalsIgnoreCase(verifyCodeEXpected))
             return false;
         return true;
     }
