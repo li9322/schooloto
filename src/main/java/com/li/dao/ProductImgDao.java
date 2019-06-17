@@ -12,9 +12,9 @@ import java.util.List;
  */
 public interface ProductImgDao {
     /**
-     * @Description:一个商品下可能拥有多个图片，所以这里是批量新增商品图片
-     * @Param:productImgList
-     * @return:int
+     * @Description: 一个商品下可能拥有多个图片，所以这里是批量新增商品图片
+     * @Param: productImgList
+     * @return: int
      */
     int batchInsertProductImg(List<ProductImg> productImgList);
 }
