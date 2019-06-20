@@ -1,5 +1,6 @@
 package com.li.util;
 
+import com.li.dto.ImageHolder;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
 import org.slf4j.Logger;
@@ -12,7 +13,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -86,9 +89,73 @@ public class ImageUtil {
         return relativeAddr;
     }
 
+    public static String generateThumbnails(ImageHolder imageHolder, String destPath) {
+        // 拼接后的新文件的相对路径
+        String relativeAddr = null;
+        try {
+            // 1.为了防止图片的重名，不采用用户上传的文件名，系统内部采用随机命名的方式
+            String randomFileName = generateRandomFileName();
+            // 2.获取用户上传的文件的扩展名,用于拼接新的文件名
+            String fileExtensionName = getFileExtensionName(imageHolder.getFileName());
+            // 3.校验目标目录是否存在，不存在创建目录
+            validateDestPath(destPath);
+            // 4.拼接新的文件名
+            relativeAddr = destPath + imageHolder.getFileName() + fileExtensionName;
+            logger.info("图片相对路径 {}", relativeAddr);
+            // 绝对路径的形式创建文件
+            String basePath = FileUtil.getImgBasePath();
+            File destFile = new File(basePath + relativeAddr);
+            logger.info("图片完整路径 {}", destFile.getAbsolutePath());
+            // 5.给源文件加水印后输出到目标文件
+            Thumbnails.of(imageHolder.getIns()).size(500, 500).watermark(Positions.BOTTOM_RIGHT, ImageIO.read(FileUtil.getWaterMarkFile()), 0.25f).outputQuality(0.8).toFile(destFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("创建水印图片失败：" + e.toString());
+        }
+        return relativeAddr;
+    }
+
+
+    /**
+     * @Description: 生成商品详情的图片
+     * @Param: prodImgDetailList
+     * @Param: relativePath
+     * @return: List<String>
+     */
+    public static List<String> generateNormalImgs(List<ImageHolder> prodImgDetailList, String relativePath) {
+        int count = 0;
+        List<String> relativeAddrList = new ArrayList<>();
+        if (prodImgDetailList != null && prodImgDetailList.size() > 0) {
+            validateDestPath(relativePath);
+            for (ImageHolder imageHolder : prodImgDetailList) {
+                // 1.为了防止图片的重名，不采用用户上传的文件名，系统内部采用随机命名的方式
+                String randomFileName = generateRandomFileName();
+                // 2.获取用户上传的文件的扩展名,用于拼接新的文件名
+                String fileEXtensionName = getFileExtensionName(imageHolder.getFileName());
+                // 3.拼接新的文件名 :相对路径+随机文件名+i+文件扩展名
+                String relativeAddr = relativePath + randomFileName + count + fileEXtensionName;
+                logger.info("图片相对路径{}", relativeAddr);
+                count++;
+                // 4.绝对路径的形式创建文件
+                String basePath = FileUtil.getImgBasePath();
+                File destFile = new File(basePath + relativeAddr);
+                logger.info("图片完整路径{}", destFile.getAbsolutePath());
+                try {
+                    // 5. 不加水印 设置为比缩略图大一点的图片（因为是商品详情图片），生成图片
+                    Thumbnails.of(imageHolder.getIns()).size(600, 300).outputQuality(0.5).toFile(destFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException("创建图片失败：" + e.toString());
+                }
+                // 将图片的相对路径名称添加到list中
+                relativeAddrList.add(relativeAddr);
+            }
+        }
+        return relativeAddrList;
+    }
+
     /**
      * @Description: 系统时间+5位随机数字
-     * @Param:
      * @return: String
      * @Author: li
      */

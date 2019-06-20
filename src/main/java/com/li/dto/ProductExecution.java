@@ -48,7 +48,7 @@ public class ProductExecution {
 
     /**
      * @Title: ProductExecution
-     * @Description: 批量操作成功的时候返回的ProductExecution
+     * @Description: 单个操作成功时返回的ProductExecution
      * @param stateEnum
      * @param product
      */
@@ -70,6 +70,15 @@ public class ProductExecution {
         this.stateInfo = stateEnum.getStateInfo();
         this.productList = productList;
         this.count = count;
+    }
+
+    /**
+     * @Description: 操作失败的时候返回的ProductExecution，仅返回状态信息即可
+     * @Param: productStateEnum
+     */
+    public ProductExecution(ProductStateEnum productStateEnum){
+        this.state=productStateEnum.getState();
+        this.stateInfo=productStateEnum.getStateInfo();
     }
 
     public int getState() {

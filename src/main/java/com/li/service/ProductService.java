@@ -5,6 +5,7 @@ import com.li.dto.ProductExecution;
 import com.li.entity.Product;
 import com.li.exception.ProductOperationException;
 
+import java.awt.font.ImageGraphicAttribute;
 import java.io.InputStream;
 import java.util.List;
 
@@ -44,4 +45,29 @@ public interface ProductService {
      * @return: ProductExecution
      */
     ProductExecution addProduct(Product product, ImageHolder imageHolder, List<ImageHolder> prodImgDetailList) throws ProductOperationException;
+
+    /**
+     * @Description: 根据productId查询product
+     * @Param: productId
+     * @return: Product
+     */
+    Product queryProductById(long productId);
+
+    /**
+     * @Description: 修改商品
+     * @Param: product  产品信息
+     * @Param: imageHolder  产品缩略图的封装信息
+     * @Param: prodImgDetailList 产品详情图片的封装信息
+     * @return: ProductExecution
+     */
+    ProductExecution modifyProduct(Product product, ImageHolder imageHolder, List<ImageHolder> prodImgDetailList) throws ProductOperationException;
+
+    /**
+     * @Description: 查询
+     * @Param: productCondition
+     * @Param: pageIndex 前端页面 只有第几页 第几页 定义为pageIndex
+     * @Param: pageSize 一页中展示的行数
+     * @return: ProductExecution
+     */
+    ProductExecution queryProductionList(Product productCondition, int pageIndex, int pageSize) throws ProductOperationException;
 }

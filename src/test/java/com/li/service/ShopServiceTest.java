@@ -1,6 +1,7 @@
 package com.li.service;
 
 import com.li.BaseTest;
+import com.li.dto.ImageHolder;
 import com.li.dto.ShopExecution;
 import com.li.entity.Area;
 import com.li.entity.PersonInfo;
@@ -55,15 +56,16 @@ public class ShopServiceTest extends BaseTest {
         InputStream ins = null;
         try {
             ins = new FileInputStream(shopFile);
-            se = shopService.addShop(shop, ins, shopFile.getName());
+            se = shopService.addShop(shop, new ImageHolder(ins, shopFile.getName()));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
         System.out.println(ShopStateEnum.CHECK.getState() + "-----" + se.getState());
     }
+
     @Test
-    public void testModifyShop(){
+    public void testModifyShop() {
         Shop shop = new Shop();
         Area area = new Area();
         ShopCategory shopCategory = new ShopCategory();
@@ -87,30 +89,31 @@ public class ShopServiceTest extends BaseTest {
         InputStream ins = null;
         try {
             ins = new FileInputStream(shopFile);
-            se = shopService.modifyShop(shop, ins, shopFile.getName());
+            se = shopService.modifyShop(shop, new ImageHolder(ins,shopFile.getName()));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
         System.out.println(ShopStateEnum.CHECK.getState() + "-----" + se.getState());
     }
+
     @Test
-    public void testGetShopList(){
-        Shop shopCondition= new Shop();
-        PersonInfo personInfo=new PersonInfo();
+    public void testGetShopList() {
+        Shop shopCondition = new Shop();
+        PersonInfo personInfo = new PersonInfo();
         personInfo.setUserId(1L);
 
         shopCondition.setOwner(personInfo);
         shopCondition.setShopName("咖啡");
 
-        ShopExecution se=shopService.getShopList(shopCondition,1,2);
+        ShopExecution se = shopService.getShopList(shopCondition, 1, 2);
 
-        System.out.println("se.getShopList().size():"+se.getShopList().size());
-        System.out.println("se.getCount():"+se.getCount());
+        System.out.println("se.getShopList().size():" + se.getShopList().size());
+        System.out.println("se.getCount():" + se.getCount());
 
-        se=shopService.getShopList(shopCondition,2,2);
+        se = shopService.getShopList(shopCondition, 2, 2);
 
-        System.out.println("se.getShopList().size():"+se.getShopList().size());
-        System.out.println("se.getCount():"+se.getCount());
+        System.out.println("se.getShopList().size():" + se.getShopList().size());
+        System.out.println("se.getCount():" + se.getCount());
     }
 }
