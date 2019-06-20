@@ -4,7 +4,9 @@ import com.li.BaseTest;
 import com.li.entity.Product;
 import com.li.entity.ProductCategory;
 import com.li.entity.Shop;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;

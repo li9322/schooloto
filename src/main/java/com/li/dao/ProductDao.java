@@ -1,6 +1,9 @@
 package com.li.dao;
 
 import com.li.entity.Product;
+import com.li.entity.ProductImg;
+
+import java.util.List;
 
 /**
  * @ClassName: ProductDao
@@ -15,4 +18,19 @@ public interface ProductDao {
      * @return: int
      */
     int insertProduct(Product product);
+
+    /**
+     * @Description: 根据productId查询product
+     * @Param: productId
+     * @return: Product
+     */
+    Product selectProductById(long productId);
+
+    /**
+     * @Description: 修改商品
+     * @Param: product
+     * @return: int
+     */
+    int updateProduct(Product product);
+
 }
