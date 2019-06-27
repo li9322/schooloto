@@ -34,4 +34,18 @@ public class ShopAdminController {
         return "shop/productcategorymanage";
     }
 
+    @RequestMapping(value = "/productoperation",method = RequestMethod.GET)
+    public String productManage1(){
+        return "shop/productoperation";
+    }
+
+    @RequestMapping(value = "/productmanagement",method = RequestMethod.GET)
+    public String productManage(){
+        return "shop/productmanagement";
+    }
+
+    @RequestMapping(value = "/localauthlogin",method = RequestMethod.GET)
+    public String localAuthlogin(){
+        return "shop/localauthlogin";
+    }
 }

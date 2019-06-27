@@ -140,7 +140,7 @@
     </logger>
 
     <!--  【日志输出级别】   表示把>=DEBUG级别的日志都输出到debugAppender对应的file -->
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="consoleAppender" />
     </root>
 

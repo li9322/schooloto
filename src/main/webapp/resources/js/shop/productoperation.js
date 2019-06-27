@@ -9,33 +9,37 @@ $(function () {
 
     // 商品添加URL
     var addProductURL = '/schooloto/shopadmin/addproduct';
-    // 商品编辑URL  TODO
-    var editProductURL = '';
+    // 商品编辑URL
+    var editProductURL = '/schooloto/shopadmin/modifyproduct?productId=' + productId;
     // 获取商品初始化信息的URL  根据页面原型只需要获取productCategory即可，后台调用之前写好的路由方法即可
-    var initProductURL = '/schooloto/shopadmin/getproductcategorybyshopid';
+    var categoryInfoURL = '/schooloto/shopadmin/getproductcategorybyshopid';
+    // 商品编辑URL 用于从后台加载该product的基本信息，页面展示用
+    var productInitURL = '/schooloto/shopadmin/getproductbyid?productId=' + productId;
+
 
     // 通过标示符，确定调用的方法
     if (isEdit) {
-        // 为true，则根据productId调用获取product信息的方法  TODO
-        getProductInfoById(productId);
+        // 为true，则根据productId调用获取product信息的方法
+        showEditProductPage(productId);
     } else {
         // 为false，则初始化新增product页面
-        getProductInitInfo();
+        showAddProductPage();
     }
 
     /**
-     * 始化新增product页面
+     * 初始化新增product页面
      *
      * 根据页面原型和数据模型，需要加载该shop对应的productCategory信息(shop信息从服务端session中获取)
      */
-    function getProductInitInfo() {
-        $.getJSON(initProductURL, function (data) {
+    function showAddProductPage() {
+        $.getJSON(categoryInfoURL, function (data) {
             if (data.success) {
                 // 设置product_category
                 var productCategoryList = data.data;
                 var productCategoryTempHtml = '';
                 productCategoryList.map(function (item, index) {
-                    productCategoryTempHtml += '<option data-value="' + item.productCategoryId + '">' + item.productCategoryName + '</option>';
+                    productCategoryTempHtml += '<option data-value="' + item.productCategoryId + '">'
+                        + item.productCategoryName + '</option>';
                 });
                 $('#product-category').html(productCategoryTempHtml);
             } else {
@@ -52,6 +56,41 @@ $(function () {
             $('#detail-img').append('<input type="file" class="detail-img">');
         }
     });
+
+    /**
+     * 编辑页面调用的function
+     */
+    function showEditProductPage(productId) {
+        $.getJSON(
+            productInitURL,
+            function (data) {
+                if (data.success) {
+                    var product = data.product;
+                    $('#product-name').val(product.productName);
+                    $('#product-desc').val(product.productDesc);
+                    $('#priority').val(product.priority);
+                    $('#normal-price').val(product.normalPrice);
+                    $('#promotion-price').val(
+                        product.promotionPrice);
+
+                    var optionHtml = '';
+                    var optionArr = data.productCategoryList;
+                    var optionSelected = product.productCategory.productCategoryId;
+                    optionArr.map(function (item, index) {
+                        var isSelect = optionSelected === item.productCategoryId ? 'selected'
+                            : '';
+                        optionHtml += '<option data-value="'
+                            + item.productCategoryId
+                            + '"'
+                            + isSelect
+                            + '>'
+                            + item.productCategoryName
+                            + '</option>';
+                    });
+                    $('#product-category').html(optionHtml);
+                }
+            });
+    };
 
     /**
      * 提交按钮的响应时间,分别对商品添加和商品编辑做不同的响应
@@ -73,11 +112,11 @@ $(function () {
                 productCateforyId: $('#product-category').find('option').not(
                     function () {
                         return !this.selected;
-                    }
-                ).data('value')
+                    }).data('value')
             };
-
+            console.log(product.productCategory);
             product.priority = $('#priority').val();
+            console.log(product.priority);
             product.normalPrice = $('#normal-price').val();
             product.promotionPrice = $('#promotion-price').val();
 
@@ -117,9 +156,12 @@ $(function () {
                 contentType: false,
                 processData: false,
                 cache: false,
-                succes: function () {
+                succes: function (data) {
                     if (data.success) {
                         $.toast('提交成功！');
+                        $('#kaptcha_img').click();
+                    } else {
+                        $.toast('提交失败！');
                         $('#kaptcha_img').click();
                     }
                 }

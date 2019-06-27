@@ -11,6 +11,7 @@ import com.li.exception.ProductOperationException;
 import com.li.service.ProductService;
 import com.li.util.FileUtil;
 import com.li.util.ImageUtil;
+import com.li.util.PageCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -181,6 +182,18 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductExecution queryProductionList(Product productCondition, int pageIndex, int pageSize) throws ProductOperationException {
-        return null;
+       List<Product> productList=null;
+       int count=0;
+       try {
+           // 将pageIndex 转换为Dao层识别的rowIndex
+           int rowIndex= PageCalculator.calculateRowIndex(pageIndex,pageSize);
+           // 调用Dao层获取productList和总量
+           productList=productDao.selectProductList(productCondition,rowIndex,pageSize);
+           count=productDao.selectCountProduct(productCondition);
+       }catch (Exception e){
+           e.printStackTrace();
+           new ProductExecution(ProductStateEnum.INNER_ERROR);
+       }
+        return new ProductExecution(ProductStateEnum.SUCCESS,productList,count);
     }
 }

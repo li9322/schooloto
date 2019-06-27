@@ -17,17 +17,28 @@
         <result column="last_edit_time" property="lastEditTime"/>
         <result column="enable_status" property="enableStatus"/>
 
+        <!-- 一对一使用association
+			product中的属性为productCategory， 通过数据库中的product_category_id关联起来的
+			类型为 com.li.entity.ProductCategory-->
         <association property="productCategory" column="product_category_id" javaType="com.li.entity.ProductCategory">
+            <!-- 对应ProductCategory中的属性 和 tb_product_category的字段 -->
             <id column="product_category_id" property="productCategoryId"/>
             <result column="product_category_name" property="productCategoryName"/>
         </association>
 
+        <!-- 一对一使用association
+                    product中的属性为shop， 通过数据库中的shop_id关联起来的
+                    类型为com.li.entity.Shop-->
         <association property="shop" column="shop_id" javaType="com.li.entity.Shop">
             <id column="shop_id" property="shopId"/>
+            <!-- 对应Shop中的属性 和 tb_shop的字段 ,如果是符合对象，使用xx.xxx的方式-->
             <result column="owner_id" property="owner.userId"/>
             <result column="shop_name" property="shopName"/>
         </association>
 
+        <!-- 一对多使用collection
+        product中的属性为productImgList，并且是通过库表中的product_id关联起来的，
+        保存的类型为com.li.entity.ProductImg -->
         <collection property="productImgList" column="product_id" ofType="com.li.entity.ProductImg">
             <id column="product_img_id" property="productImgId"/>
             <result column="img_addr" property="imgAddr"/>
@@ -37,6 +48,25 @@
             <result column="product_id" property="productId"/>
         </collection>
     </resultMap>
+
+    <sql id="selectProductByCondition">
+        <!-- 根据shopId 查询-->
+        <if test="productCondition.shop != null and  productCondition.shop.shopId != null ">
+            and shop_id = #{productCondition.shop.shopId}
+        </if>
+        <!-- 根据product_category_id  查询-->
+        <if test="productCondition.productCategory != null and productCondition.productCategory.productCategoryId != null">
+            and product_category_id = #{productCondition.productCategory.productCategoryId}
+        </if>
+        <!-- 根据enable_status  查询-->
+        <if test="productCondition.enableStatus != null">
+            and enable_status = #{productCondition.enableStatus}
+        </if>
+        <!-- 根据product_name  模糊查询-->
+        <if test="productCondition.productName != null">
+            and product_name like '%${productCondition.productName}%'
+        </if>
+    </sql>
 
     <insert id="insertProduct" parameterType="com.li.entity.Product" useGeneratedKeys="true" keyProperty="productId"
             keyColumn="product_id">
@@ -90,12 +120,48 @@
             <if test="createTime != null">create_time = #{createTiem},</if>
             <if test="lastEditTime != null">last_edit_time = #{lastEditTime},</if>
             <if test="enableStatus != null">enable_status = #{enableStatus},</if>
-
-            <if test="productCategory != null and productCategory.productCategoryId != null">product_category_id = #{productCategory.productCategoryId}</if>
+            <!-- 注意如果是引用的复杂对象的写法 -->
+            <if test="productCategory != null and productCategory.productCategoryId != null">product_category_id =
+                #{productCategory.productCategoryId}
+            </if>
         </set>
         where
-            product_id = #{productId}
+        product_id = #{productId}
         and
-            shop_id = #{shop.shopId}
+        shop_id = #{shop.shopId}
+    </update>
+
+    <select id="selectProductList" resultType="com.li.entity.Product">
+        select
+        product_id,product_name,product_desc,img_addr,normal_price,promotion_price,priority,create_time,last_edit_time,
+        enable_status,product_category_id,shop_id
+        from
+        tb_product
+        <where>
+            <include refid="selectProductByCondition"></include>
+        </where>
+        order by
+        priority desc
+        limit #{rowIndex},#{pageSize}
+    </select>
+
+    <select id="selectCountProduct" resultType="Integer">
+        select
+        count(1)
+        from
+        tb_product
+        <where>
+            <include refid="selectProductByCondition"></include>
+        </where>
+    </select>
+
+    <update id="updateProductCategory2Null">
+        update
+            tb_product
+            set
+            product_category_id = null
+            where  product_category_id = #{productCategoryId}
+            and
+            shop_id = #{shopId}
     </update>
 </mapper>
