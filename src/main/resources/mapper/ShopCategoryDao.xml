@@ -16,6 +16,10 @@
         FROM
         tb_shop_category
         <where>
+            <!-- 首页查询一级类别的商铺信息 -->
+            <if test="shopCategoryCondition == null">
+                and parent_id is null
+            </if>
             <!-- 控制层getshopinitinfo的方法 shopCategoryService.getShopCategoryList(new ShopCategory());
                 只能选择二级商铺类别，不能挂载一级商铺类别大类目录下
            -->
@@ -23,8 +27,8 @@
                 and parent_id is not null
             </if>
             <!-- 如果传递了父类的id,则查询对应父类下的目录 -->
-            <if test="shopCategoryCondition.parentId != null">
-                and parent_id = #{shopCategoryCondition.parentId}
+            <if test="shopCategoryCondition != null and shopCategoryCondition.parent != null">
+                and parent_id = #{shopCategoryCondition.parent.shopCategoryId}
             </if>
         </where>
         ORDER BY priority

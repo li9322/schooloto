@@ -91,12 +91,12 @@ public class ShopDaoTest extends BaseTest {
     }
 
     @Test
-    public void testSelectShopListAndCount(){
+    public void testSelectShopListAndCount() {
 
-        Area area=new Area();
-        ShopCategory shopCategory=new ShopCategory();
-        PersonInfo personInfo=new PersonInfo();
-        List<Shop> shopList=null;
+        Area area = new Area();
+        ShopCategory shopCategory = new ShopCategory();
+        PersonInfo personInfo = new PersonInfo();
+        List<Shop> shopList = null;
         /**
          * 可输入的查询条件： 1.商铺名（要求模糊查询） 2.区域Id 3.商铺状态 4.商铺类别 5.owner
          *
@@ -108,77 +108,77 @@ public class ShopDaoTest extends BaseTest {
         shopCondition.setShopName("咖啡");
 
         // 1.1 数据库中只有3条数据符合 ，我们分页条件 取出5条，即全部取出 验证rowIndex 和 pageSize
-        shopList=shopDao.selectShopList(shopCondition,0,5);
-        System.out.println("shopList.size()--3:"+shopList.size());
+        shopList = shopDao.selectShopList(shopCondition, 0, 5);
+        System.out.println("shopList.size()--3:" + shopList.size());
 
-        int count1=shopDao.selectShopCount(shopCondition);
-        System.out.println("count1--3:"+count1);
+        int count1 = shopDao.selectShopCount(shopCondition);
+        System.out.println("count1--3:" + count1);
 
         // 1.2 数据库中只有3条数据符合 ，我们分页条件 取出2条，即取出前两条 验证rowIndex 和 pageSize
-        shopList=shopDao.selectShopList(shopCondition,0,2);
-        System.out.println("shopList.size()--2:"+shopList.size());
+        shopList = shopDao.selectShopList(shopCondition, 0, 2);
+        System.out.println("shopList.size()--2:" + shopList.size());
 
         // 总数依然是3条
-        int count2=shopDao.selectShopCount(shopCondition);
-        System.out.println("count2--3:"+count2);
+        int count2 = shopDao.selectShopCount(shopCondition);
+        System.out.println("count2--3:" + count2);
 
         // 为了不影响测试， 新实例化出来一个Shop
 
         // 2.区域Id 库表中符合条件的记录有10条 areaId=1 10条 areaId=2 3条
-        Shop shopCondition2=new Shop();
+        Shop shopCondition2 = new Shop();
         area.setAreaId(1);
         shopCondition2.setArea(area);
-        shopList=shopDao.selectShopList(shopCondition2,0,99);
-        System.out.println("shopList.size()--10:"+shopList.size());
+        shopList = shopDao.selectShopList(shopCondition2, 0, 99);
+        System.out.println("shopList.size()--10:" + shopList.size());
 
         area.setAreaId(2);
         shopCondition2.setArea(area);
-        shopList=shopDao.selectShopList(shopCondition2,0,99);
-        System.out.println("shopList.size()--3:"+shopList.size());
+        shopList = shopDao.selectShopList(shopCondition2, 0, 99);
+        System.out.println("shopList.size()--3:" + shopList.size());
 
         // 3.商铺状态 EnableStatus=0 12条 EnableStatus=1 1条
-        Shop shopCondition3=new Shop();
+        Shop shopCondition3 = new Shop();
         shopCondition3.setEnableStatus(0);
-        shopList=shopDao.selectShopList(shopCondition3,0,99);
-        System.out.println("shopList.size()--12:"+shopList.size());
+        shopList = shopDao.selectShopList(shopCondition3, 0, 99);
+        System.out.println("shopList.size()--12:" + shopList.size());
 
         shopCondition3.setEnableStatus(1);
-        shopList=shopDao.selectShopList(shopCondition3,0,99);
-        System.out.println("shopList.size()--1:"+shopList.size());
+        shopList = shopDao.selectShopList(shopCondition3, 0, 99);
+        System.out.println("shopList.size()--1:" + shopList.size());
 
         // 4.商铺类别
         // shop_category_id = 1 9条数据
         // shop_category_id = 2 3条数据
         // shop_category_id = 3 1条数据
-        Shop shopCondition4=new Shop();
+        Shop shopCondition4 = new Shop();
 
         shopCategory.setShopCategoryId(1L);
         shopCondition4.setShopCategory(shopCategory);
-        shopList=shopDao.selectShopList(shopCondition4,0,99);
-        System.out.println("shopList.size()--9:"+shopList.size());
+        shopList = shopDao.selectShopList(shopCondition4, 0, 99);
+        System.out.println("shopList.size()--9:" + shopList.size());
 
         shopCategory.setShopCategoryId(2L);
         shopCondition4.setShopCategory(shopCategory);
-        shopList=shopDao.selectShopList(shopCondition4,0,99);
-        System.out.println("shopList.size()--3:"+shopList.size());
+        shopList = shopDao.selectShopList(shopCondition4, 0, 99);
+        System.out.println("shopList.size()--3:" + shopList.size());
 
         shopCategory.setShopCategoryId(3L);
         shopCondition4.setShopCategory(shopCategory);
-        shopList=shopDao.selectShopList(shopCondition4,0,99);
-        System.out.println("shopList.size()--1:"+shopList.size());
+        shopList = shopDao.selectShopList(shopCondition4, 0, 99);
+        System.out.println("shopList.size()--1:" + shopList.size());
 
         // 5.owner_id=1 13条 其余0条
         Shop shopCondition5 = new Shop();
         personInfo.setUserId(1L);
         shopCondition5.setOwner(personInfo);
         shopList = shopDao.selectShopList(shopCondition5, 0, 99);
-        System.out.println("shopList.size()--13:"+shopList.size());
+        System.out.println("shopList.size()--13:" + shopList.size());
 
 
         personInfo.setUserId(877L);
         shopCondition5.setOwner(personInfo);
         shopList = shopDao.selectShopList(shopCondition5, 0, 99);
-        System.out.println("shopList.size()--0:"+shopList.size());
+        System.out.println("shopList.size()--0:" + shopList.size());
 
 
         // 组合场景不全面，仅列几个
@@ -190,11 +190,11 @@ public class ShopDaoTest extends BaseTest {
         shopCondition6.setShopName("咖啡");
         shopList = shopDao.selectShopList(shopCondition6, 0, 99);
 //        Assert.assertEquals(3, shopList.size());
-        System.out.println("shopList.size()--3:"+shopList.size());
+        System.out.println("shopList.size()--3:" + shopList.size());
 
         int count6 = shopDao.selectShopCount(shopCondition6);
 //        Assert.assertEquals(3, count6);
-        System.out.println("count6--3:"+count6);
+        System.out.println("count6--3:" + count6);
 
 
         // 组合场景 area_id =1 shop_name like %咖啡% owner_id=1
@@ -206,16 +206,54 @@ public class ShopDaoTest extends BaseTest {
         shopCondition7.setShopName("咖啡");
         shopList = shopDao.selectShopList(shopCondition7, 0, 99);
 //        Assert.assertEquals(2, shopList.size());
-        System.out.println("shopList.size()--2:"+shopList.size());
+        System.out.println("shopList.size()--2:" + shopList.size());
 
         int count7 = shopDao.selectShopCount(shopCondition7);
 //        Assert.assertEquals(2, count7);
-        System.out.println("count7--2:"+count7);
+        System.out.println("count7--2:" + count7);
     }
 
     @Test
-    public void testSelectShopById(){
-        Shop shop=shopDao.selectShopById(3l);
+    public void testSelectShopListAndCount2() {
+        /**
+         *
+         * <!-- 选择了某个大类，列举出该大类下面的全部商店 以parent_id来筛选 --> <if
+         * test="shopCondition.shopCategory != null and
+         * shopCondition.shopCategory.parent != null and
+         * shopCondition.shopCategory.parent.shopCategoryId != null "> and
+         * s.shop_category_id in ( select shop_category_id from tb_shop_category
+         * where parent_id = #{shopCondition.shopCategory.parent.shopCategoryId}
+         * ) </if>
+         *
+         *
+         *
+         */
+
+        Shop shopCondition=new Shop();
+        //模拟
+        ShopCategory childShopCategory=new ShopCategory();
+        ShopCategory parentShopCategory =new ShopCategory();
+        // 设置父类的shopCategoryId
+        parentShopCategory.setShopCategoryId(3l);
+        // 设置父子关系
+        childShopCategory.setParent(parentShopCategory);
+
+        // 设置目录
+        shopCondition.setShopCategory(childShopCategory);
+
+        List<Shop> shopList=shopDao.selectShopList(shopCondition,0,2);
+        int count=shopDao.selectShopCount(shopCondition);
+        System.out.println(shopList.size());
+        System.out.println(count);
+        for (Shop shop:shopList){
+            System.out.println(shop.toString());
+        }
+
+    }
+
+    @Test
+    public void testSelectShopById() {
+        Shop shop = shopDao.selectShopById(3l);
         System.out.println(shop.toString());
     }
 }
