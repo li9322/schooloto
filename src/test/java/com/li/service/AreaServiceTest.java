@@ -1,10 +1,13 @@
 package com.li.service;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.li.BaseTest;
 import com.li.entity.Area;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +16,7 @@ public class AreaServiceTest extends BaseTest {
     private AreaService areaService;
 
     @Test
-    public void testGetAreaList(){
+    public void testGetAreaList() throws JsonParseException, JsonMappingException, IOException {
         List<Area> areaList = areaService.getAreaList();
         System.out.println(areaList);
 
